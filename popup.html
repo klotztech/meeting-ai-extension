@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Meeting Recorder</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎙️ AI Meeting Recorder</h1>
+      <p class="subtitle">Record, transcribe & summarize meetings</p>
+    </div>
+
+    <!-- Recording Controls -->
+    <div id="recordingControls" class="section">
+      <div class="status-indicator" id="statusIndicator">
+        <span class="status-dot"></span>
+        <span id="statusText">Ready</span>
+      </div>
+      
+      <div class="button-group">
+        <button id="startBtn" class="btn btn-primary">
+          <span class="btn-icon">▶️</span>
+          Start Recording
+        </button>
+        <button id="stopBtn" class="btn btn-danger" disabled>
+          <span class="btn-icon">⏹️</span>
+          Stop Recording
+        </button>
+      </div>
+
+      <div id="recordingInfo" class="recording-info hidden">
+        <div class="timer">
+          <span id="timer">00:00:00</span>
+        </div>
+        <div class="audio-levels">
+          <div class="audio-bar">
+            <div id="audioLevel" class="audio-level-fill"></div>
+          </div>
+        </div>
+        <div class="realtime-transcript-container">
+          <h4 style="margin: 10px 0 5px 0; font-size: 12px; color: #666;">Live Transcript:</h4>
+          <div id="realtimeTranscript" class="realtime-transcript">
+            <em style="color: #999;">Listening for speech...</em>
+          </div>
+          <div id="audioStatus" style="margin-top: 5px; font-size: 11px; color: #666;">
+            <span id="audioStatusText">Checking audio...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processing Section -->
+    <div id="processingSection" class="section hidden">
+      <div class="processing-spinner"></div>
+      <p id="processingText">Processing audio...</p>
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="section hidden">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="transcript">Transcript</button>
+        <button class="tab-btn" data-tab="summary">Summary</button>
+      </div>
+
+      <div id="transcriptTab" class="tab-content active">
+        <div class="result-header">
+          <h3>📝 Transcript</h3>
+          <button id="copyTranscript" class="btn-icon-only" title="Copy transcript">
+            📋
+          </button>
+        </div>
+        <div id="transcriptContent" class="result-content"></div>
+      </div>
+
+      <div id="summaryTab" class="tab-content">
+        <div class="result-header">
+          <h3>🤖 AI Summary</h3>
+          <button id="copySummary" class="btn-icon-only" title="Copy summary">
+            📋
+          </button>
+        </div>
+        <div id="summaryContent" class="result-content"></div>
+      </div>
+
+      <div class="action-buttons">
+        <button id="downloadAudio" class="btn btn-secondary">
+          🎵 Download Audio
+        </button>
+        <button id="downloadTranscript" class="btn btn-secondary">
+          📥 Download Transcript
+        </button>
+        <button id="downloadSummary" class="btn btn-secondary">
+          📥 Download Summary
+        </button>
+        <button id="newRecording" class="btn btn-primary">
+          🎙️ New Recording
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Section -->
+    <div id="errorSection" class="section hidden">
+      <div class="error-message">
+        <span class="error-icon">⚠️</span>
+        <p id="errorText"></p>
+        <button id="dismissError" class="btn btn-secondary">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+
