@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 	if (msg.target !== "offscreen") return;
 
 	if (msg.action === "startRecording") {
-		startRecording(msg.streamId)
+		startRecording(msg.streamId, msg.micDeviceId)
 			.then((result) => sendResponse(result))
 			.catch((error) =>
 				sendResponse({ success: false, error: error.message })
