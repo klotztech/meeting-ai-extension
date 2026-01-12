@@ -4,6 +4,7 @@ let tabStream = null;
 let micStream = null;
 let audioElement = null;
 let recordingStartTime = null;
+let callerId = null;
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 	if (msg.target !== "offscreen") return;
@@ -32,6 +33,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			isRecording: isRecording,
 			startTime: recordingStartTime,
 		});
+		return false;
+	}
+
+	if (msg.action === "setCallerId") {
+		callerId = msg.callerId;
+		console.log("Caller ID set:", callerId);
 		return false;
 	}
 });
@@ -106,9 +113,20 @@ async function startRecording(streamId, micDeviceId) {
 			// Download directly from offscreen (has DOM APIs)
 			const url = URL.createObjectURL(blob);
 			const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+
+			// Create filename with caller ID if available
+			let filename;
+			if (callerId) {
+				// Sanitize caller ID for filename
+				const sanitized = callerId.replace(/[^a-z0-9]/gi, "-");
+				filename = `${sanitized}-${timestamp}.webm`;
+			} else {
+				filename = `recording-${timestamp}.webm`;
+			}
+
 			const a = document.createElement("a");
 			a.href = url;
-			a.download = `recording-${timestamp}.webm`;
+			a.download = filename;
 			a.click();
 
 			setTimeout(() => {
@@ -129,6 +147,9 @@ async function startRecording(streamId, micDeviceId) {
 				audioElement.srcObject = null;
 			}
 			audioContext.close();
+
+			// Reset caller ID after download
+			callerId = null;
 		};
 
 		recorder.start(1000); // 1 second timeslice for better metadata

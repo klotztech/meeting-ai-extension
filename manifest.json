@@ -4,6 +4,13 @@
 	"version": "1.0.0",
 	"description": "Record tab audio with microphone for calls and meetings",
 	"permissions": ["tabCapture", "offscreen", "storage"],
+	"content_scripts": [
+		{
+			"matches": ["https://voice.google.com/*"],
+			"js": ["content.js"],
+			"run_at": "document_idle"
+		}
+	],
 	"action": {
 		"default_popup": "popup.html"
 	},

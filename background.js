@@ -18,6 +18,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			.catch(() => {});
 		return false;
 	}
+
+	if (msg.type === "callerIdDetected") {
+		// Forward caller ID to offscreen document
+		chrome.runtime
+			.sendMessage({
+				target: "offscreen",
+				action: "setCallerId",
+				callerId: msg.callerId,
+			})
+			.catch(() => {});
+		return false;
+	}
 });
 
 async function handleStart(tabId, micDeviceId) {
