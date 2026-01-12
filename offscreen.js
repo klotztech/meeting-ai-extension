@@ -167,6 +167,13 @@ async function stopRecording() {
 		return { success: true };
 	}
 
+	// Request any remaining data before stopping
+	if (recorder.state === "recording") {
+		recorder.requestData();
+		// Small delay to ensure data is flushed
+		await new Promise((resolve) => setTimeout(resolve, 100));
+	}
+
 	recorder.stop();
 	recordingStartTime = null;
 	return { success: true };
