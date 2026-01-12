@@ -5,6 +5,45 @@ const startBtn = document.getElementById("start");
 const stopBtn = document.getElementById("stop");
 const statusEl = document.getElementById("status");
 const timerEl = document.getElementById("timer");
+const micSelect = document.getElementById("micSelect");
+
+// Populate microphone devices
+async function loadMicrophoneDevices() {
+	try {
+		// Request permission first
+		await navigator.mediaDevices.getUserMedia({ audio: true });
+
+		const devices = await navigator.mediaDevices.enumerateDevices();
+		const audioInputs = devices.filter((d) => d.kind === "audioinput");
+
+		micSelect.innerHTML = "";
+
+		if (audioInputs.length === 0) {
+			micSelect.innerHTML =
+				'<option value="">No microphone found</option>';
+			return;
+		}
+
+		audioInputs.forEach((device, index) => {
+			const option = document.createElement("option");
+			option.value = device.deviceId;
+			option.textContent = device.label || `Microphone ${index + 1}`;
+			micSelect.appendChild(option);
+		});
+
+		// Select default device
+		const defaultDevice = audioInputs.find((d) => d.deviceId === "default");
+		if (defaultDevice) {
+			micSelect.value = defaultDevice.deviceId;
+		}
+	} catch (error) {
+		console.error("Error loading microphones:", error);
+		micSelect.innerHTML = '<option value="">Mic permission denied</option>';
+	}
+}
+
+// Load devices on startup
+loadMicrophoneDevices();
 
 startBtn.addEventListener("click", async () => {
 	const [tab] = await chrome.tabs.query({
@@ -12,8 +51,10 @@ startBtn.addEventListener("click", async () => {
 		currentWindow: true,
 	});
 
+	const selectedMicId = micSelect.value;
+
 	chrome.runtime.sendMessage(
-		{ action: "start", tabId: tab.id },
+		{ action: "start", tabId: tab.id, micDeviceId: selectedMicId },
 		(response) => {
 			if (response?.success) {
 				startBtn.disabled = true;

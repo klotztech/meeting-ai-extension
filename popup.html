@@ -56,6 +56,24 @@
 		<h2>🎙️ Tab Audio Recorder</h2>
 		<div id="status" class="status">Ready</div>
 		<div class="timer" id="timer">00:00:00</div>
+		<div style="margin: 10px 0">
+			<label
+				for="micSelect"
+				style="display: block; margin-bottom: 5px; font-size: 12px"
+				>Microphone:</label
+			>
+			<select
+				id="micSelect"
+				style="
+					width: 100%;
+					padding: 8px;
+					border-radius: 4px;
+					border: 1px solid #ddd;
+				"
+			>
+				<option value="">Loading devices...</option>
+			</select>
+		</div>
 		<button id="start">Start Recording</button>
 		<button id="stop" disabled>Stop & Download</button>
 		<script src="popup.js"></script>

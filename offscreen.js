@@ -36,7 +36,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 	}
 });
 
-async function startRecording(streamId) {
+async function startRecording(streamId, micDeviceId) {
 	try {
 		// Get tab audio
 		tabStream = await navigator.mediaDevices.getUserMedia({
@@ -53,15 +53,24 @@ async function startRecording(streamId) {
 		audioElement.srcObject = tabStream;
 		audioElement.play();
 
-		// Get microphone
+		// Get microphone with specific device ID
 		try {
-			micStream = await navigator.mediaDevices.getUserMedia({
+			const micConstraints = {
 				audio: {
 					echoCancellation: true,
 					noiseSuppression: true,
 					autoGainControl: true,
 				},
-			});
+			};
+
+			// Add device ID if specified
+			if (micDeviceId && micDeviceId !== "default") {
+				micConstraints.audio.deviceId = { exact: micDeviceId };
+			}
+
+			micStream = await navigator.mediaDevices.getUserMedia(
+				micConstraints
+			);
 		} catch (e) {
 			console.log("Mic not available:", e);
 		}

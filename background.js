@@ -2,7 +2,7 @@ let offscreenReady = false;
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 	if (msg.action === "start") {
-		handleStart(msg.tabId).then(sendResponse);
+		handleStart(msg.tabId, msg.micDeviceId).then(sendResponse);
 		return true;
 	}
 
@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 	}
 });
 
-async function handleStart(tabId) {
+async function handleStart(tabId, micDeviceId) {
 	try {
 		await ensureOffscreen();
 
@@ -38,6 +38,7 @@ async function handleStart(tabId) {
 			target: "offscreen",
 			action: "startRecording",
 			streamId,
+			micDeviceId,
 		});
 
 		return response;
