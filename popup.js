@@ -289,7 +289,7 @@ async function startRecordingInPopup(streamId, tabId) {
     monitorAudioLevel();
 
     // Start real-time transcription
-    startRealtimeTranscription(micStream || tabStream);
+    //startRealtimeTranscription(micStream || tabStream);
 
     // Update UI
     updateUI('recording');
