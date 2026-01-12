@@ -5,7 +5,6 @@ let recordingState = {
   timerInterval: null,
   audioBlob: null, // Store the audio blob for download
   transcript: null,
-  realtimeTranscript: '', // Store real-time transcript
   summary: null,
   mediaRecorder: null,
   audioChunks: [],
@@ -545,7 +544,6 @@ function resetUI() {
     timerInterval: null,
     audioBlob: null,
     transcript: null,
-    realtimeTranscript: '',
     summary: null,
     mediaRecorder: null,
     audioChunks: [],
