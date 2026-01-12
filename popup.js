@@ -637,26 +637,6 @@ async function transcribeAudio(audioBlob) {
     console.log('Whisper transcription not available:', error);
   }
 
-  // Web Speech API will NOT work properly for recorded audio
-  // It's only useful for real-time transcription during recording
-  // For recorded audio, return a helpful message
-  const audioDuration = audioBlob.size / 16000; // Rough estimate (bytes to seconds)
-  if (audioDuration > 30) {
-    return '[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-      '⚠️ IMPORTANT: Web Speech API cannot transcribe pre-recorded audio files.\n\n' +
-      'Your recording (' + Math.round(audioDuration) + ' seconds) was saved successfully, ' +
-      'but the Web Speech API is designed for real-time speech recognition only, not for ' +
-      'processing recorded audio files. This is why only the first few seconds were transcribed.\n\n' +
-      '✅ SOLUTION: Integrate Whisper.js for proper transcription\n' +
-      'Whisper.js can transcribe your complete recording accurately. See README.md for setup instructions.\n\n' +
-      '📥 Your audio file can be downloaded using the "Download Audio" button.\n' +
-      'You can also use external tools like:\n' +
-      '- OpenAI Whisper (command line)\n' +
-      '- Google Cloud Speech-to-Text\n' +
-      '- Azure Speech Services\n\n' +
-      'See WHERE_ARE_RECORDINGS_STORED.md for more information.';
-  }
-
   // Web Speech API disabled - it was causing audio muting issues and doesn't work reliably
   // Return helpful message pointing to Whisper.js integration
   const audioDuration = audioBlob.size / 16000; // Rough estimate (bytes to seconds)
