@@ -12,8 +12,7 @@ let recordingState = {
   audioContext: null,
   analyser: null,
   tabStream: null,
-  micStream: null,
-  speechRecognition: null // Store speech recognition instance
+  micStream: null
 };
 
 // DOM Elements
@@ -32,7 +31,7 @@ const summaryContent = document.getElementById('summaryContent');
 const progressFill = document.getElementById('progressFill');
 const processingText = document.getElementById('processingText');
 const audioLevel = document.getElementById('audioLevel');
-const realtimeTranscript = document.getElementById('realtimeTranscript');
+// Real-time transcript element removed
 
 // Tab switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -288,8 +287,8 @@ async function startRecordingInPopup(streamId, tabId) {
     // Start audio level monitoring
     monitorAudioLevel();
 
-    // Start real-time transcription
-    startRealtimeTranscription(micStream || tabStream);
+    // Real-time transcription disabled
+    // startRealtimeTranscription(micStream || tabStream);
 
     // Update UI
     updateUI('recording');
@@ -336,121 +335,14 @@ function monitorAudioLevel() {
   checkLevel();
 }
 
-// Start real-time transcription
-function startRealtimeTranscription(audioStream) {
-  // Check if Speech Recognition is available
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    if (realtimeTranscript) {
-      realtimeTranscript.innerHTML = '<em style="color: #999;">Real-time transcription not available in this browser. Transcript will be generated after recording.</em>';
-    }
-    return;
-  }
+// Real-time transcription disabled - it was causing audio muting issues
+// function startRealtimeTranscription(audioStream) {
+//   ... removed speech recognition code ...
+// }
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-
-  recognition.continuous = true;
-  recognition.interimResults = true; // Show interim results
-  recognition.lang = 'en-US';
-
-  // Reset transcript
-  recordingState.realtimeTranscript = '';
-  if (realtimeTranscript) {
-    realtimeTranscript.innerHTML = '<em style="color: #999;">Listening for speech...</em>';
-  }
-
-  recognition.onresult = (event) => {
-    let interimTranscript = '';
-    let finalTranscript = '';
-
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        finalTranscript += transcript + ' ';
-        recordingState.realtimeTranscript += transcript + ' ';
-      } else {
-        interimTranscript += transcript;
-      }
-    }
-
-    // Update UI with both final and interim results
-    if (realtimeTranscript) {
-      const displayText = recordingState.realtimeTranscript + (interimTranscript ? '<span style="color: #999; font-style: italic;">' + interimTranscript + '</span>' : '');
-      realtimeTranscript.innerHTML = displayText || '<em style="color: #999;">Listening for speech...</em>';
-
-      // Auto-scroll to bottom
-      realtimeTranscript.scrollTop = realtimeTranscript.scrollHeight;
-    }
-
-    console.log('Real-time transcript updated:', recordingState.realtimeTranscript.length, 'characters');
-  };
-
-  recognition.onerror = (event) => {
-    console.error('Speech recognition error:', event.error);
-    if (realtimeTranscript) {
-      if (event.error === 'not-allowed') {
-        realtimeTranscript.innerHTML = '<em style="color: #f44336;">Microphone permission denied. Real-time transcription disabled.</em>';
-      } else if (event.error === 'no-speech') {
-        // This is normal, just means no speech detected yet
-        if (!recordingState.realtimeTranscript) {
-          realtimeTranscript.innerHTML = '<em style="color: #999;">Listening for speech...</em>';
-        }
-      } else {
-        realtimeTranscript.innerHTML = '<em style="color: #f44336;">Transcription error: ' + event.error + '</em>';
-      }
-    }
-
-    // Try to restart if it's a recoverable error
-    if (event.error !== 'aborted' && event.error !== 'not-allowed' && recordingState.isRecording) {
-      setTimeout(() => {
-        if (recordingState.isRecording && recognition) {
-          try {
-            recognition.start();
-          } catch (e) {
-            console.error('Failed to restart recognition:', e);
-          }
-        }
-      }, 1000);
-    }
-  };
-
-  recognition.onend = () => {
-    console.log('Speech recognition ended');
-    // Restart if still recording
-    if (recordingState.isRecording) {
-      try {
-        recognition.start();
-      } catch (e) {
-        console.error('Failed to restart recognition:', e);
-      }
-    }
-  };
-
-  // Start recognition
-  try {
-    recognition.start();
-    recordingState.speechRecognition = recognition;
-    console.log('Real-time transcription started');
-  } catch (error) {
-    console.error('Failed to start speech recognition:', error);
-    if (realtimeTranscript) {
-      realtimeTranscript.innerHTML = '<em style="color: #f44336;">Failed to start transcription: ' + error.message + '</em>';
-    }
-  }
-}
-
-// Stop real-time transcription
-function stopRealtimeTranscription() {
-  if (recordingState.speechRecognition) {
-    try {
-      recordingState.speechRecognition.stop();
-      recordingState.speechRecognition = null;
-      console.log('Real-time transcription stopped');
-    } catch (error) {
-      console.error('Error stopping speech recognition:', error);
-    }
-  }
-}
+// function stopRealtimeTranscription() {
+//   ... removed speech recognition code ...
+// }
 
 // Stop Recording
 stopBtn.addEventListener('click', async () => {
@@ -644,8 +536,8 @@ function updateAudioLevel(level) {
 }
 
 function resetUI() {
-  // Stop any ongoing transcription
-  stopRealtimeTranscription();
+  // Speech recognition disabled
+  // stopRealtimeTranscription();
 
   recordingState = {
     isRecording: false,
@@ -660,17 +552,14 @@ function resetUI() {
     audioContext: null,
     analyser: null,
     tabStream: null,
-    micStream: null,
-    speechRecognition: null
+    micStream: null
   };
   stopTimer();
   timer.textContent = '00:00:00';
   updateUI('ready');
   transcriptContent.textContent = '';
   summaryContent.textContent = '';
-  if (realtimeTranscript) {
-    realtimeTranscript.innerHTML = '<em style="color: #999;">Listening for speech...</em>';
-  }
+  // Real-time transcript UI removed
 }
 
 function showError(message) {
@@ -701,21 +590,14 @@ async function getAudioFromStorage() {
 
 async function processRecording(audioBlob) {
   try {
-    // Step 1: Use real-time transcript if available, otherwise transcribe
+    // Step 1: Transcribe audio (speech recognition disabled)
     updateProgress(10, 'Processing transcript...');
     let transcript;
 
-    if (recordingState.realtimeTranscript && recordingState.realtimeTranscript.trim().length > 0) {
-      // Use real-time transcript
-      transcript = recordingState.realtimeTranscript.trim();
-      console.log('Using real-time transcript:', transcript.length, 'characters');
-      recordingState.transcript = transcript;
-    } else {
-      // Fallback: Try to transcribe audio (may not work well for long recordings)
-      updateProgress(10, 'Transcribing audio...');
-      transcript = await transcribeAudio(audioBlob);
-      recordingState.transcript = transcript;
-    }
+    // Transcribe audio using fallback method (Whisper.js if available)
+    updateProgress(10, 'Transcribing audio...');
+    transcript = await transcribeAudio(audioBlob);
+    recordingState.transcript = transcript;
 
     // Step 2: Generate Summary
     updateProgress(60, 'Generating AI summary...');
@@ -755,157 +637,22 @@ async function transcribeAudio(audioBlob) {
     console.log('Whisper transcription not available:', error);
   }
 
-  // Web Speech API will NOT work properly for recorded audio
-  // It's only useful for real-time transcription during recording
-  // For recorded audio, return a helpful message
+  // Web Speech API disabled - it was causing audio muting issues and doesn't work reliably
+  // Return helpful message pointing to Whisper.js integration
   const audioDuration = audioBlob.size / 16000; // Rough estimate (bytes to seconds)
-  if (audioDuration > 30) {
-    return '[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-      '⚠️ IMPORTANT: Web Speech API cannot transcribe pre-recorded audio files.\n\n' +
-      'Your recording (' + Math.round(audioDuration) + ' seconds) was saved successfully, ' +
-      'but the Web Speech API is designed for real-time speech recognition only, not for ' +
-      'processing recorded audio files. This is why only the first few seconds were transcribed.\n\n' +
-      '✅ SOLUTION: Integrate Whisper.js for proper transcription\n' +
-      'Whisper.js can transcribe your complete recording accurately. See README.md for setup instructions.\n\n' +
-      '📥 Your audio file can be downloaded using the "Download Audio" button.\n' +
-      'You can also use external tools like:\n' +
-      '- OpenAI Whisper (command line)\n' +
-      '- Google Cloud Speech-to-Text\n' +
-      '- Azure Speech Services\n\n' +
-      'See WHERE_ARE_RECORDINGS_STORED.md for more information.';
-  }
-
-  // Fallback: Try Web Speech API (has limitations - requires user interaction and audio playback)
-  return new Promise((resolve, reject) => {
-    // Check if SpeechRecognition is available
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      // No speech recognition available - provide helpful message
-      resolve('[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-        'Transcription is not available in this browser. The audio has been recorded successfully.\n\n' +
-        'To enable transcription:\n' +
-        '1. Integrate Whisper.js for offline transcription (see README.md)\n' +
-        '2. Or use a browser that supports the Web Speech API\n\n' +
-        'Your audio recording has been saved and can be replayed anytime.');
-      return;
-    }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    let transcript = '';
-    let hasResult = false;
-
-    // Set timeout to avoid hanging
-    const timeout = setTimeout(() => {
-      if (!hasResult) {
-        recognition.stop();
-        URL.revokeObjectURL(url);
-        resolve('[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-          'Transcription timed out. The audio was recorded successfully.\n\n' +
-          'For better transcription, please integrate Whisper.js (see README.md).\n\n' +
-          'Your audio recording has been saved.');
-      }
-    }, 30000); // 30 second timeout
-
-    recognition.onresult = (event) => {
-      hasResult = true;
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript + ' ';
-      }
-    };
-
-    recognition.onend = () => {
-      clearTimeout(timeout);
-      if (url) URL.revokeObjectURL(url);
-      if (transcript.trim()) {
-        resolve(transcript.trim());
-      } else {
-        resolve('Transcription completed but no speech was detected. The audio was recorded successfully. ' +
-          'This might be because: 1) The recording was silent, 2) Web Speech API requires audio playback ' +
-          'which may not work in all contexts, or 3) Microphone permissions were denied. ' +
-          'For better transcription, please integrate Whisper.js (see README.md).');
-      }
-    };
-
-    recognition.onerror = (event) => {
-      clearTimeout(timeout);
-      if (url) URL.revokeObjectURL(url);
-
-      // Handle specific errors gracefully
-      if (event.error === 'not-allowed') {
-        resolve('[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-          'The meeting audio was recorded successfully, but automatic transcription is not available.\n\n' +
-          'To enable transcription:\n\n' +
-          'OPTION 1: Grant Microphone Permissions (Quick)\n' +
-          '1. Go to chrome://extensions/\n' +
-          '2. Find "AI Meeting Recorder" and click "Details"\n' +
-          '3. Under "Permissions", ensure microphone is allowed\n' +
-          '4. OR when you click "Start Recording", click "Allow" in the popup\n\n' +
-          'OPTION 2: Use Whisper.js (Recommended - No permissions needed)\n' +
-          'See README.md for Whisper.js integration instructions\n' +
-          'This provides better accuracy and works offline\n\n' +
-          'Your audio recording has been saved and can be replayed anytime.\n' +
-          'See HOW_TO_ENABLE_MICROPHONE.md for detailed instructions.');
-      } else if (event.error === 'no-speech') {
-        resolve('[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-          'No speech was detected in the recording. The audio was recorded successfully.\n\n' +
-          'This might be because:\n' +
-          '- The recording was silent or too quiet\n' +
-          '- No participants were speaking\n' +
-          '- Audio levels were too low\n\n' +
-          'Your audio recording has been saved.');
-      } else {
-        resolve(`[TRANSCRIPTION NOT AVAILABLE]\n\n` +
-          `Transcription encountered an error (${event.error}). The audio was recorded successfully.\n\n` +
-          `For reliable transcription, please integrate Whisper.js (see README.md).\n\n` +
-          `Your audio recording has been saved.`);
-      }
-    };
-
-    // Create audio element for playback (required for Web Speech API)
-    // Declare variables outside try block to avoid scope issues
-    let audio;
-    let url;
-
-    try {
-      audio = new Audio();
-      url = URL.createObjectURL(audioBlob);
-      audio.src = url;
-      audio.volume = 0.5; // Lower volume to avoid feedback
-
-      // Start recognition first
-      recognition.start();
-
-      // Then play audio (this might not work due to autoplay policies)
-      audio.play().catch((playError) => {
-        console.warn('Could not play audio for transcription:', playError);
-        // Still try to get transcription if recognition started
-        setTimeout(() => {
-          if (!hasResult) {
-            recognition.stop();
-            clearTimeout(timeout);
-            if (url) URL.revokeObjectURL(url);
-            resolve('[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-              'Audio playback is required for Web Speech API transcription but was blocked. ' +
-              'The audio was recorded successfully.\n\n' +
-              'For offline transcription, please integrate Whisper.js (see README.md).\n\n' +
-              'Your audio recording has been saved.');
-          }
-        }, 2000);
-      });
-    } catch (startError) {
-      clearTimeout(timeout);
-      if (url) URL.revokeObjectURL(url);
-      resolve('[TRANSCRIPTION NOT AVAILABLE]\n\n' +
-        'Could not start speech recognition. The audio was recorded successfully.\n\n' +
-        'This might be due to permission issues or browser limitations.\n' +
-        'For reliable transcription, please integrate Whisper.js (see README.md).\n\n' +
-        'Your audio recording has been saved.');
-    }
-  });
+  
+  return '[TRANSCRIPTION NOT AVAILABLE]\n\n' +
+    '⚠️ Real-time speech recognition has been disabled to prevent audio interference during calls.\n\n' +
+    'Your recording (' + Math.round(audioDuration) + ' seconds) was saved successfully.\n\n' +
+    '✅ SOLUTION: Integrate Whisper.js for offline transcription\n' +
+    'Whisper.js provides accurate transcription without interfering with your call audio.\n' +
+    'See WHISPER_JS_INTEGRATION.md and README.md for setup instructions.\n\n' +
+    '📥 Your audio file can be downloaded using the "Download Audio" button.\n' +
+    'You can also use external tools like:\n' +
+    '- OpenAI Whisper (command line)\n' +
+    '- Google Cloud Speech-to-Text\n' +
+    '- Azure Speech Services\n\n' +
+    'See WHERE_ARE_RECORDINGS_STORED.md for more information.';
 }
 
 async function transcribeWithWhisper(audioBlob) {

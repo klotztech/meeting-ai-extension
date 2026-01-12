@@ -183,40 +183,6 @@ body {
   transition: width 0.1s;
 }
 
-/* Real-time Transcript */
-.realtime-transcript-container {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.realtime-transcript {
-  max-height: 150px;
-  overflow-y: auto;
-  background: #f9f9f9;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: #333;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.realtime-transcript::-webkit-scrollbar {
-  width: 4px;
-}
-
-.realtime-transcript::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 2px;
-}
-
-.realtime-transcript::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 2px;
-}
-
 /* Processing Section */
 #processingSection {
   text-align: center;

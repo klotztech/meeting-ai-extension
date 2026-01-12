@@ -133,27 +133,14 @@ function sendMessageToPopup(message) {
   });
 }
 
-// Transcribe Audio (using Web Speech API or Whisper.js)
+// Transcribe Audio (using Whisper.js only - Web Speech API disabled)
 async function transcribeAudio(audioBlob) {
-  // For now, return a placeholder
-  // In production, integrate Whisper.js here
-  // This would require loading the Whisper model in the service worker
-
+  // Web Speech API has been disabled as it was causing audio interference
+  // Only Whisper.js integration is supported for transcription
+  
   return new Promise((resolve, reject) => {
-    // Convert blob to audio
-    const audio = new Audio();
-    const url = URL.createObjectURL(audioBlob);
-    audio.src = url;
-
-    // Use Web Speech API as fallback
-    if ('webkitSpeechRecognition' in self || 'SpeechRecognition' in self) {
-      // Note: SpeechRecognition doesn't work in service workers
-      // We'll need to handle this in the popup or use a different approach
-      resolve('Transcription requires audio playback. Please use the popup interface for full transcription features.');
-    } else {
-      // Use Whisper.js integration
-      transcribeWithWhisperJS(audioBlob).then(resolve).catch(reject);
-    }
+    // Try Whisper.js integration
+    transcribeWithWhisperJS(audioBlob).then(resolve).catch(reject);
   });
 }
 

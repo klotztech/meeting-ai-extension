@@ -5,7 +5,7 @@ A fully browser-based Chrome extension that records meeting audio from Google Me
 ## ✨ Features
 
 - 🎤 **Record Meeting Audio**: Captures both microphone and speaker audio from any web-based meeting platform
-- 📝 **Automatic Transcription**: Transcribes recorded audio using browser-based speech recognition
+- 📝 **Automatic Transcription**: Transcribes recorded audio using Whisper.js (optional setup required)
 - 🤖 **AI-Powered Summaries**: Generates structured meeting summaries with:
   - Executive Summary
   - Key Discussion Points
@@ -69,7 +69,7 @@ After stopping the recording:
 - **Manifest V3**: Uses the latest Chrome extension standard
 - **Tab Capture API**: Records audio from the active browser tab
 - **MediaRecorder API**: Captures and stores audio as WebM format
-- **Web Speech API**: Provides transcription (fallback to Whisper.js for better accuracy)
+- **Whisper.js Integration**: Optional offline transcription (see WHISPER_JS_INTEGRATION.md)
 - **Browser-based LLM**: Generates summaries using local processing
 
 ### Supported Platforms
@@ -140,9 +140,9 @@ meeting-ai-extension/
 
 ## ⚠️ Limitations & Notes
 
-1. **Browser-based Transcription**: The current implementation uses Web Speech API, which requires audio playback. For offline/better accuracy, integrate Whisper.js.
+1. **Transcription**: Real-time speech recognition has been disabled due to audio interference issues. For transcription, integrate Whisper.js (see WHISPER_JS_INTEGRATION.md).
 
-2. **Service Worker Limitations**: Some APIs (like SpeechRecognition) don't work in service workers. Transcription is handled in the popup.
+2. **Service Worker Limitations**: Transcription must be handled with Whisper.js integration for best results.
 
 3. **Audio Format**: Recordings are saved as WebM format. This is widely supported but may need conversion for some use cases.
 
@@ -163,9 +163,9 @@ meeting-ai-extension/
 - The extension will still record tab audio even if mic is denied
 
 ### "No transcript available"
-- The Web Speech API requires audio playback
-- Try using the Whisper.js integration for better results
-- Check browser console for errors
+- Real-time transcription has been disabled to prevent audio interference
+- Integrate Whisper.js for proper transcription (see WHISPER_JS_INTEGRATION.md)
+- Your audio file is saved and can be downloaded for external transcription
 
 ### Extension not appearing
 - Make sure Developer mode is enabled
