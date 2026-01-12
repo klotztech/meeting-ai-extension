@@ -106,6 +106,7 @@ async function startRecordingInPopup(streamId, tabId) {
           chromeMediaSourceId: streamId
         },
         optional: [
+          // Allow users to continue hearing the meeting audio while recording
           { suppressLocalAudioPlayback: false }
         ]
       },
