@@ -104,7 +104,10 @@ async function startRecordingInPopup(streamId, tabId) {
         mandatory: {
           chromeMediaSource: 'tab',
           chromeMediaSourceId: streamId
-        }
+        },
+        optional: [
+          { suppressLocalAudioPlayback: false }
+        ]
       },
       video: false
     };
