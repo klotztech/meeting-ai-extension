@@ -118,7 +118,7 @@ async function startRecording(streamId, micDeviceId) {
 			let filename;
 			if (callerId) {
 				// Sanitize caller ID for filename
-				const sanitized = callerId.replace(/[^a-z0-9]/gi, "-");
+				const sanitized = callerId.replace(/[^a-z0-9]/gi, "");
 				filename = `${sanitized}-${timestamp}.webm`;
 			} else {
 				filename = `recording-${timestamp}.webm`;
