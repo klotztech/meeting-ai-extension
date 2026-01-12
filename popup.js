@@ -31,10 +31,16 @@ async function loadMicrophoneDevices() {
 			micSelect.appendChild(option);
 		});
 
-		// Select default device
-		const defaultDevice = audioInputs.find((d) => d.deviceId === "default");
-		if (defaultDevice) {
-			micSelect.value = defaultDevice.deviceId;
+		// Load saved device preference
+		const saved = await chrome.storage.local.get("selectedMicDeviceId");
+		if (saved.selectedMicDeviceId) {
+			// Check if saved device still exists
+			const deviceExists = audioInputs.some(
+				(d) => d.deviceId === saved.selectedMicDeviceId
+			);
+			if (deviceExists) {
+				micSelect.value = saved.selectedMicDeviceId;
+			}
 		}
 	} catch (error) {
 		console.error("Error loading microphones:", error);
@@ -44,6 +50,11 @@ async function loadMicrophoneDevices() {
 
 // Load devices on startup
 loadMicrophoneDevices();
+
+// Save selected device when changed
+micSelect.addEventListener("change", () => {
+	chrome.storage.local.set({ selectedMicDeviceId: micSelect.value });
+});
 
 startBtn.addEventListener("click", async () => {
 	const [tab] = await chrome.tabs.query({
